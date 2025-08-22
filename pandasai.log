@@ -1,0 +1,1022 @@
+2025-08-21 15:29:22 [INFO] Question: Create a visualization showing the most interesting insights
+2025-08-21 15:29:22 [INFO] Running PandasAI with openai LLM...
+2025-08-21 15:29:22 [INFO] Prompt ID: 4bcbe322-60fd-4674-ba0f-7b47cb7d6a13
+2025-08-21 15:29:22 [INFO] Generating new code...
+2025-08-21 15:29:22 [INFO] Using Prompt: <tables>
+
+<table dialect="duckdb" table_name="table_fb677c8e260ec54c3f3c30be1125b4ef" columns="[{"name": "Date", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Region", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "State", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "City", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Customer", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Segment", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Priority", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Category", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Subcategory", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Product", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Sales", "type": "integer", "description": null, "expression": null, "alias": null}, {"name": "Profit", "type": "integer", "description": null, "expression": null, "alias": null}]" dimensions="1000x12">
+Date,Region,State,City,Customer,Segment,Priority,Category,Subcategory,Product,Sales,Profit
+2021-12-01 00:00:00,East,Maryland,Bowie,Anita Hahn,Home Office,Not Specified,Office Supplies,Storage & Organization,Safco Industrial Wire Shelving,194,-425
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon 4070 Series Armless Uphol,1239,-309
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,White GlueTop Scratch Pads,157,109
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon Valutask Swivel Chairs,4083,-1680
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,Black Print Carbonless Snap-Of,34,20
+</table>
+
+
+</tables>
+
+You are already provided with the following functions that you can call:
+<function>
+def execute_sql_query(sql_query: str) -> pd.Dataframe
+    """This method connects to the database, executes the sql query and returns the dataframe"""
+</function>
+
+
+Update this initial code:
+```python
+# TODO: import the required dependencies
+import pandas as pd
+
+# Write code here
+
+# Declare result var: 
+type (possible values "string", "number", "dataframe", "plot"). Examples: { "type": "string", "value": f"The highest salary is {highest_salary}." } or { "type": "number", "value": 125 } or { "type": "dataframe", "value": pd.DataFrame({...}) } or { "type": "plot", "value": "temp_chart.png" }
+
+```
+
+
+
+### QUERY
+ Create a visualization showing the most interesting insights
+
+At the end, declare "result" variable as a dictionary of type and value.
+
+
+Generate python code and return full updated code:
+
+### Note: Use only relevant table for query and do aggregation, sorting, joins and grouby through sql query
+2025-08-21 15:29:26 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 15:29:26 [INFO] Code Generated:
+# TODO: import the required dependencies
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Query to get total sales and profit by Region and Segment, sorted by total sales descending
+sql_query = """
+SELECT 
+    Region,
+    Segment,
+    SUM(Sales) AS Total_Sales,
+    SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Region, Segment
+ORDER BY Total_Sales DESC
+"""
+
+df = execute_sql_query(sql_query)
+
+# Plotting total sales and profit by Region and Segment
+plt.figure(figsize=(12, 7))
+sns.set_style("whitegrid")
+
+# Create a barplot for Total Sales
+bar1 = sns.barplot(data=df, x="Region", y="Total_Sales", hue="Segment", palette="muted")
+plt.title("Total Sales by Region and Segment")
+plt.ylabel("Total Sales")
+plt.xlabel("Region")
+plt.legend(title="Segment", loc='upper right')
+plt.tight_layout()
+plt.savefig("sales_by_region_segment.png")
+plt.close()
+
+# Create a barplot for Total Profit
+plt.figure(figsize=(12, 7))
+bar2 = sns.barplot(data=df, x="Region", y="Total_Profit", hue="Segment", palette="bright")
+plt.title("Total Profit by Region and Segment")
+plt.ylabel("Total Profit")
+plt.xlabel("Region")
+plt.legend(title="Segment", loc='upper right')
+plt.tight_layout()
+plt.savefig("profit_by_region_segment.png")
+plt.close()
+
+# We will return the sales plot as the most interesting insight visualization
+result = { "type": "plot", "value": "sales_by_region_segment.png" }
+2025-08-21 15:29:26 [INFO] Validating code requirements...
+2025-08-21 15:29:26 [INFO] Code validation successful.
+2025-08-21 15:29:26 [INFO] Cleaning the generated code...
+2025-08-21 15:29:26 [INFO] Executing code: import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+sql_query = """
+SELECT 
+    Region,
+    Segment,
+    SUM(Sales) AS Total_Sales,
+    SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Region, Segment
+ORDER BY Total_Sales DESC
+"""
+df = execute_sql_query(sql_query)
+plt.figure(figsize=(12, 7))
+sns.set_style('whitegrid')
+bar1 = sns.barplot(data=df, x='Region', y='Total_Sales', hue='Segment', palette='muted')
+plt.title('Total Sales by Region and Segment')
+plt.ylabel('Total Sales')
+plt.xlabel('Region')
+plt.legend(title='Segment', loc='upper right')
+plt.tight_layout()
+plt.savefig('exports/charts/temp_chart_b97e5429-7d9b-4175-805e-5f3d17f71ab7.png')
+plt.close()
+plt.figure(figsize=(12, 7))
+bar2 = sns.barplot(data=df, x='Region', y='Total_Profit', hue='Segment', palette='bright')
+plt.title('Total Profit by Region and Segment')
+plt.ylabel('Total Profit')
+plt.xlabel('Region')
+plt.legend(title='Segment', loc='upper right')
+plt.tight_layout()
+plt.savefig('exports/charts/temp_chart_b97e5429-7d9b-4175-805e-5f3d17f71ab7.png')
+plt.close()
+result = {'type': 'plot', 'value': 'exports/charts/temp_chart_b97e5429-7d9b-4175-805e-5f3d17f71ab7.png'}
+2025-08-21 15:29:49 [INFO] Response generated successfully.
+2025-08-21 15:58:19 [INFO] Question: Create a visualization showing the most interesting insights
+2025-08-21 15:58:19 [INFO] Running PandasAI with openai LLM...
+2025-08-21 15:58:19 [INFO] Prompt ID: 4df9fa60-0f2f-4bfa-ad50-dfb33649e37d
+2025-08-21 15:58:19 [INFO] Generating new code...
+2025-08-21 15:58:19 [INFO] Using Prompt: <tables>
+
+<table dialect="duckdb" table_name="table_fb677c8e260ec54c3f3c30be1125b4ef" columns="[{"name": "Date", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Region", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "State", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "City", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Customer", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Segment", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Priority", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Category", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Subcategory", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Product", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Sales", "type": "integer", "description": null, "expression": null, "alias": null}, {"name": "Profit", "type": "integer", "description": null, "expression": null, "alias": null}]" dimensions="1000x12">
+Date,Region,State,City,Customer,Segment,Priority,Category,Subcategory,Product,Sales,Profit
+2021-12-01 00:00:00,East,Maryland,Bowie,Anita Hahn,Home Office,Not Specified,Office Supplies,Storage & Organization,Safco Industrial Wire Shelving,194,-425
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon 4070 Series Armless Uphol,1239,-309
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,White GlueTop Scratch Pads,157,109
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon Valutask Swivel Chairs,4083,-1680
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,Black Print Carbonless Snap-Of,34,20
+</table>
+
+
+</tables>
+
+You are already provided with the following functions that you can call:
+<function>
+def execute_sql_query(sql_query: str) -> pd.Dataframe
+    """This method connects to the database, executes the sql query and returns the dataframe"""
+</function>
+
+
+Update this initial code:
+```python
+# TODO: import the required dependencies
+import pandas as pd
+
+# Write code here
+
+# Declare result var: 
+type (possible values "string", "number", "dataframe", "plot"). Examples: { "type": "string", "value": f"The highest salary is {highest_salary}." } or { "type": "number", "value": 125 } or { "type": "dataframe", "value": pd.DataFrame({...}) } or { "type": "plot", "value": "temp_chart.png" }
+
+```
+
+
+
+### QUERY
+ Create a visualization showing the most interesting insights
+
+At the end, declare "result" variable as a dictionary of type and value.
+
+
+Generate python code and return full updated code:
+
+### Note: Use only relevant table for query and do aggregation, sorting, joins and grouby through sql query
+2025-08-21 15:58:23 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 15:58:23 [INFO] Code Generated:
+# TODO: import the required dependencies
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Query to get total sales and profit by Region and Segment to find interesting insights
+sql_query = """
+SELECT 
+    Region,
+    Segment,
+    SUM(Sales) AS Total_Sales,
+    SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Region, Segment
+ORDER BY Total_Sales DESC
+"""
+
+df = execute_sql_query(sql_query)
+
+# Plotting total sales and profit by Region and Segment
+plt.figure(figsize=(12, 6))
+sns.barplot(data=df, x='Region', y='Total_Sales', hue='Segment')
+plt.title('Total Sales by Region and Segment')
+plt.ylabel('Total Sales')
+plt.xlabel('Region')
+plt.legend(title='Segment')
+plt.tight_layout()
+plt.savefig("sales_by_region_segment.png")
+plt.close()
+
+plt.figure(figsize=(12, 6))
+sns.barplot(data=df, x='Region', y='Total_Profit', hue='Segment')
+plt.title('Total Profit by Region and Segment')
+plt.ylabel('Total Profit')
+plt.xlabel('Region')
+plt.legend(title='Segment')
+plt.tight_layout()
+plt.savefig("profit_by_region_segment.png")
+plt.close()
+
+# We can return one plot or both. Here returning sales plot as most interesting insight.
+result = { "type": "plot", "value": "sales_by_region_segment.png" }
+2025-08-21 15:58:23 [INFO] Validating code requirements...
+2025-08-21 15:58:23 [INFO] Code validation successful.
+2025-08-21 15:58:23 [INFO] Cleaning the generated code...
+2025-08-21 15:58:23 [INFO] Executing code: import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+sql_query = """
+SELECT 
+    Region,
+    Segment,
+    SUM(Sales) AS Total_Sales,
+    SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Region, Segment
+ORDER BY Total_Sales DESC
+"""
+df = execute_sql_query(sql_query)
+plt.figure(figsize=(12, 6))
+sns.barplot(data=df, x='Region', y='Total_Sales', hue='Segment')
+plt.title('Total Sales by Region and Segment')
+plt.ylabel('Total Sales')
+plt.xlabel('Region')
+plt.legend(title='Segment')
+plt.tight_layout()
+plt.savefig('exports/charts/temp_chart_6c9b1a2c-1774-48ba-baf7-58733a1fc0d1.png')
+plt.close()
+plt.figure(figsize=(12, 6))
+sns.barplot(data=df, x='Region', y='Total_Profit', hue='Segment')
+plt.title('Total Profit by Region and Segment')
+plt.ylabel('Total Profit')
+plt.xlabel('Region')
+plt.legend(title='Segment')
+plt.tight_layout()
+plt.savefig('exports/charts/temp_chart_6c9b1a2c-1774-48ba-baf7-58733a1fc0d1.png')
+plt.close()
+result = {'type': 'plot', 'value': 'exports/charts/temp_chart_6c9b1a2c-1774-48ba-baf7-58733a1fc0d1.png'}
+2025-08-21 15:58:25 [INFO] Response generated successfully.
+2025-08-21 16:10:35 [INFO] Question: How is the top customer?
+2025-08-21 16:10:35 [INFO] Running PandasAI with openai LLM...
+2025-08-21 16:10:35 [INFO] Prompt ID: 473df93c-573d-4b90-ae1c-4b396bd3c629
+2025-08-21 16:10:35 [INFO] Generating new code...
+2025-08-21 16:10:35 [INFO] Using Prompt: <tables>
+
+<table dialect="duckdb" table_name="table_fb677c8e260ec54c3f3c30be1125b4ef" columns="[{"name": "Date", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Region", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "State", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "City", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Customer", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Segment", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Priority", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Category", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Subcategory", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Product", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Sales", "type": "integer", "description": null, "expression": null, "alias": null}, {"name": "Profit", "type": "integer", "description": null, "expression": null, "alias": null}]" dimensions="1000x12">
+Date,Region,State,City,Customer,Segment,Priority,Category,Subcategory,Product,Sales,Profit
+2021-12-01 00:00:00,East,Maryland,Bowie,Anita Hahn,Home Office,Not Specified,Office Supplies,Storage & Organization,Safco Industrial Wire Shelving,194,-425
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon 4070 Series Armless Uphol,1239,-309
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,White GlueTop Scratch Pads,157,109
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon Valutask Swivel Chairs,4083,-1680
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,Black Print Carbonless Snap-Of,34,20
+</table>
+
+
+</tables>
+
+You are already provided with the following functions that you can call:
+<function>
+def execute_sql_query(sql_query: str) -> pd.Dataframe
+    """This method connects to the database, executes the sql query and returns the dataframe"""
+</function>
+
+
+Update this initial code:
+```python
+# TODO: import the required dependencies
+import pandas as pd
+
+# Write code here
+
+# Declare result var: 
+type (possible values "string", "number", "dataframe", "plot"). Examples: { "type": "string", "value": f"The highest salary is {highest_salary}." } or { "type": "number", "value": 125 } or { "type": "dataframe", "value": pd.DataFrame({...}) } or { "type": "plot", "value": "temp_chart.png" }
+
+```
+
+
+
+### QUERY
+ How is the top customer?
+
+At the end, declare "result" variable as a dictionary of type and value.
+
+
+Generate python code and return full updated code:
+
+### Note: Use only relevant table for query and do aggregation, sorting, joins and grouby through sql query
+2025-08-21 16:10:39 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 16:10:39 [INFO] Code Generated:
+# TODO: import the required dependencies
+import pandas as pd
+
+# SQL query to find the top customer by total sales
+sql_query = """
+SELECT Customer, SUM(Sales) AS Total_Sales, SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Customer
+ORDER BY Total_Sales DESC
+LIMIT 1
+"""
+
+# Execute the query
+top_customer_df = execute_sql_query(sql_query)
+
+# Extract the top customer info
+top_customer = top_customer_df.iloc[0]['Customer']
+total_sales = top_customer_df.iloc[0]['Total_Sales']
+total_profit = top_customer_df.iloc[0]['Total_Profit']
+
+result = {
+    "type": "string",
+    "value": f"The top customer is {top_customer} with total sales of {total_sales} and total profit of {total_profit}."
+}
+2025-08-21 16:10:39 [INFO] Validating code requirements...
+2025-08-21 16:10:39 [INFO] Code validation successful.
+2025-08-21 16:10:39 [INFO] Cleaning the generated code...
+2025-08-21 16:10:39 [INFO] Executing code: import pandas as pd
+sql_query = """
+SELECT Customer, SUM(Sales) AS Total_Sales, SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Customer
+ORDER BY Total_Sales DESC
+LIMIT 1
+"""
+top_customer_df = execute_sql_query(sql_query)
+top_customer = top_customer_df.iloc[0]['Customer']
+total_sales = top_customer_df.iloc[0]['Total_Sales']
+total_profit = top_customer_df.iloc[0]['Total_Profit']
+result = {'type': 'string', 'value': f'The top customer is {top_customer} with total sales of {total_sales} and total profit of {total_profit}.'}
+2025-08-21 16:10:39 [INFO] Response generated successfully.
+2025-08-21 16:16:15 [INFO] Question: Show me the top 10 customers by revenue.
+2025-08-21 16:16:15 [INFO] Running PandasAI with openai LLM...
+2025-08-21 16:16:15 [INFO] Prompt ID: 09805055-7d19-46d5-bcc1-dec18087784a
+2025-08-21 16:16:15 [INFO] Generating new code...
+2025-08-21 16:16:15 [INFO] Using Prompt: <tables>
+
+<table dialect="duckdb" table_name="table_fb677c8e260ec54c3f3c30be1125b4ef" columns="[{"name": "Date", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Region", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "State", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "City", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Customer", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Segment", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Priority", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Category", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Subcategory", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Product", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Sales", "type": "integer", "description": null, "expression": null, "alias": null}, {"name": "Profit", "type": "integer", "description": null, "expression": null, "alias": null}]" dimensions="1000x12">
+Date,Region,State,City,Customer,Segment,Priority,Category,Subcategory,Product,Sales,Profit
+2021-12-01 00:00:00,East,Maryland,Bowie,Anita Hahn,Home Office,Not Specified,Office Supplies,Storage & Organization,Safco Industrial Wire Shelving,194,-425
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon 4070 Series Armless Uphol,1239,-309
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,White GlueTop Scratch Pads,157,109
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon Valutask Swivel Chairs,4083,-1680
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,Black Print Carbonless Snap-Of,34,20
+</table>
+
+
+</tables>
+
+You are already provided with the following functions that you can call:
+<function>
+def execute_sql_query(sql_query: str) -> pd.Dataframe
+    """This method connects to the database, executes the sql query and returns the dataframe"""
+</function>
+
+
+Update this initial code:
+```python
+# TODO: import the required dependencies
+import pandas as pd
+
+# Write code here
+
+# Declare result var: 
+type (possible values "string", "number", "dataframe", "plot"). Examples: { "type": "string", "value": f"The highest salary is {highest_salary}." } or { "type": "number", "value": 125 } or { "type": "dataframe", "value": pd.DataFrame({...}) } or { "type": "plot", "value": "temp_chart.png" }
+
+```
+
+
+
+### QUERY
+ Show me the top 10 customers by revenue.
+
+At the end, declare "result" variable as a dictionary of type and value.
+
+
+Generate python code and return full updated code:
+
+### Note: Use only relevant table for query and do aggregation, sorting, joins and grouby through sql query
+2025-08-21 16:16:17 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 16:16:18 [INFO] Code Generated:
+# TODO: import the required dependencies
+import pandas as pd
+
+# SQL query to get top 10 customers by revenue (Sales)
+sql_query = """
+SELECT Customer, SUM(Sales) AS Total_Revenue
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Customer
+ORDER BY Total_Revenue DESC
+LIMIT 10
+"""
+
+# Execute the query
+top_customers_df = execute_sql_query(sql_query)
+
+# Declare result var:
+result = { "type": "dataframe", "value": top_customers_df }
+2025-08-21 16:16:18 [INFO] Validating code requirements...
+2025-08-21 16:16:18 [INFO] Code validation successful.
+2025-08-21 16:16:18 [INFO] Cleaning the generated code...
+2025-08-21 16:16:18 [INFO] Executing code: import pandas as pd
+sql_query = """
+SELECT Customer, SUM(Sales) AS Total_Revenue
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Customer
+ORDER BY Total_Revenue DESC
+LIMIT 10
+"""
+top_customers_df = execute_sql_query(sql_query)
+result = {'type': 'dataframe', 'value': top_customers_df}
+2025-08-21 16:16:18 [INFO] Response generated successfully.
+2025-08-21 16:28:48 [INFO] Question: Show me the top 10 customers by revenue.
+2025-08-21 16:28:49 [INFO] Running PandasAI with openai LLM...
+2025-08-21 16:28:49 [INFO] Prompt ID: 11c8a7ab-c84b-4ee6-8813-317a2df48a6a
+2025-08-21 16:28:49 [INFO] Generating new code...
+2025-08-21 16:28:49 [INFO] Using Prompt: <tables>
+
+<table dialect="duckdb" table_name="table_fb677c8e260ec54c3f3c30be1125b4ef" columns="[{"name": "Date", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Region", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "State", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "City", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Customer", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Segment", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Priority", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Category", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Subcategory", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Product", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Sales", "type": "integer", "description": null, "expression": null, "alias": null}, {"name": "Profit", "type": "integer", "description": null, "expression": null, "alias": null}]" dimensions="1000x12">
+Date,Region,State,City,Customer,Segment,Priority,Category,Subcategory,Product,Sales,Profit
+2021-12-01 00:00:00,East,Maryland,Bowie,Anita Hahn,Home Office,Not Specified,Office Supplies,Storage & Organization,Safco Industrial Wire Shelving,194,-425
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon 4070 Series Armless Uphol,1239,-309
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,White GlueTop Scratch Pads,157,109
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon Valutask Swivel Chairs,4083,-1680
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,Black Print Carbonless Snap-Of,34,20
+</table>
+
+
+</tables>
+
+You are already provided with the following functions that you can call:
+<function>
+def execute_sql_query(sql_query: str) -> pd.Dataframe
+    """This method connects to the database, executes the sql query and returns the dataframe"""
+</function>
+
+
+Update this initial code:
+```python
+# TODO: import the required dependencies
+import pandas as pd
+
+# Write code here
+
+# Declare result var: 
+type (possible values "string", "number", "dataframe", "plot"). Examples: { "type": "string", "value": f"The highest salary is {highest_salary}." } or { "type": "number", "value": 125 } or { "type": "dataframe", "value": pd.DataFrame({...}) } or { "type": "plot", "value": "temp_chart.png" }
+
+```
+
+
+
+### QUERY
+ Show me the top 10 customers by revenue.
+
+At the end, declare "result" variable as a dictionary of type and value.
+
+
+Generate python code and return full updated code:
+
+### Note: Use only relevant table for query and do aggregation, sorting, joins and grouby through sql query
+2025-08-21 16:28:50 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 16:28:50 [INFO] Code Generated:
+# TODO: import the required dependencies
+import pandas as pd
+
+# SQL query to get top 10 customers by revenue (Sales)
+sql_query = """
+SELECT Customer, SUM(Sales) AS Total_Revenue
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Customer
+ORDER BY Total_Revenue DESC
+LIMIT 10
+"""
+
+# Execute the query
+top_customers_df = execute_sql_query(sql_query)
+
+# Declare result var:
+result = { "type": "dataframe", "value": top_customers_df }
+2025-08-21 16:28:50 [INFO] Validating code requirements...
+2025-08-21 16:28:50 [INFO] Code validation successful.
+2025-08-21 16:28:50 [INFO] Cleaning the generated code...
+2025-08-21 16:28:50 [INFO] Executing code: import pandas as pd
+sql_query = """
+SELECT Customer, SUM(Sales) AS Total_Revenue
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Customer
+ORDER BY Total_Revenue DESC
+LIMIT 10
+"""
+top_customers_df = execute_sql_query(sql_query)
+result = {'type': 'dataframe', 'value': top_customers_df}
+2025-08-21 16:28:51 [INFO] Response generated successfully.
+2025-08-21 16:29:44 [INFO] Question: Hi
+2025-08-21 16:29:44 [INFO] Running PandasAI with openai LLM...
+2025-08-21 16:29:44 [INFO] Prompt ID: 1f7dc331-3f14-4b61-bf7d-08865c256ec4
+2025-08-21 16:29:44 [INFO] Generating new code...
+2025-08-21 16:29:44 [INFO] Using Prompt: <tables>
+
+<table dialect="duckdb" table_name="table_fb677c8e260ec54c3f3c30be1125b4ef" columns="[{"name": "Date", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Region", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "State", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "City", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Customer", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Segment", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Priority", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Category", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Subcategory", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Product", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Sales", "type": "integer", "description": null, "expression": null, "alias": null}, {"name": "Profit", "type": "integer", "description": null, "expression": null, "alias": null}]" dimensions="1000x12">
+Date,Region,State,City,Customer,Segment,Priority,Category,Subcategory,Product,Sales,Profit
+2021-12-01 00:00:00,East,Maryland,Bowie,Anita Hahn,Home Office,Not Specified,Office Supplies,Storage & Organization,Safco Industrial Wire Shelving,194,-425
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon 4070 Series Armless Uphol,1239,-309
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,White GlueTop Scratch Pads,157,109
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon Valutask Swivel Chairs,4083,-1680
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,Black Print Carbonless Snap-Of,34,20
+</table>
+
+
+</tables>
+
+You are already provided with the following functions that you can call:
+<function>
+def execute_sql_query(sql_query: str) -> pd.Dataframe
+    """This method connects to the database, executes the sql query and returns the dataframe"""
+</function>
+
+
+Update this initial code:
+```python
+# TODO: import the required dependencies
+import pandas as pd
+
+# Write code here
+
+# Declare result var: 
+type (possible values "string", "number", "dataframe", "plot"). Examples: { "type": "string", "value": f"The highest salary is {highest_salary}." } or { "type": "number", "value": 125 } or { "type": "dataframe", "value": pd.DataFrame({...}) } or { "type": "plot", "value": "temp_chart.png" }
+
+```
+
+
+
+### QUERY
+ Hi
+
+At the end, declare "result" variable as a dictionary of type and value.
+
+
+Generate python code and return full updated code:
+
+### Note: Use only relevant table for query and do aggregation, sorting, joins and grouby through sql query
+2025-08-21 16:29:48 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 16:29:48 [INFO] Code Generated:
+# TODO: import the required dependencies
+import pandas as pd
+
+# SQL query to get total sales and profit by Region, sorted by total sales descending
+sql_query = """
+SELECT 
+    Region, 
+    SUM(Sales) AS Total_Sales, 
+    SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Region
+ORDER BY Total_Sales DESC
+"""
+
+# Execute the query
+df_result = execute_sql_query(sql_query)
+
+# Declare result variable
+result = { "type": "dataframe", "value": df_result }
+2025-08-21 16:29:48 [INFO] Validating code requirements...
+2025-08-21 16:29:48 [INFO] Code validation successful.
+2025-08-21 16:29:48 [INFO] Cleaning the generated code...
+2025-08-21 16:29:48 [INFO] Executing code: import pandas as pd
+sql_query = """
+SELECT 
+    Region, 
+    SUM(Sales) AS Total_Sales, 
+    SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Region
+ORDER BY Total_Sales DESC
+"""
+df_result = execute_sql_query(sql_query)
+result = {'type': 'dataframe', 'value': df_result}
+2025-08-21 16:29:48 [INFO] Response generated successfully.
+2025-08-21 16:30:26 [INFO] Question: hi
+2025-08-21 16:30:26 [INFO] Running PandasAI with openai LLM...
+2025-08-21 16:30:26 [INFO] Prompt ID: b57e58ea-b6e2-44e7-87d9-40ff84312c3c
+2025-08-21 16:30:26 [INFO] Generating new code...
+2025-08-21 16:30:26 [INFO] Using Prompt: <tables>
+
+<table dialect="duckdb" table_name="table_fb677c8e260ec54c3f3c30be1125b4ef" columns="[{"name": "Date", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Region", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "State", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "City", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Customer", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Segment", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Priority", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Category", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Subcategory", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Product", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Sales", "type": "integer", "description": null, "expression": null, "alias": null}, {"name": "Profit", "type": "integer", "description": null, "expression": null, "alias": null}]" dimensions="1000x12">
+Date,Region,State,City,Customer,Segment,Priority,Category,Subcategory,Product,Sales,Profit
+2021-12-01 00:00:00,East,Maryland,Bowie,Anita Hahn,Home Office,Not Specified,Office Supplies,Storage & Organization,Safco Industrial Wire Shelving,194,-425
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon 4070 Series Armless Uphol,1239,-309
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,White GlueTop Scratch Pads,157,109
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon Valutask Swivel Chairs,4083,-1680
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,Black Print Carbonless Snap-Of,34,20
+</table>
+
+
+</tables>
+
+You are already provided with the following functions that you can call:
+<function>
+def execute_sql_query(sql_query: str) -> pd.Dataframe
+    """This method connects to the database, executes the sql query and returns the dataframe"""
+</function>
+
+
+Update this initial code:
+```python
+# TODO: import the required dependencies
+import pandas as pd
+
+# Write code here
+
+# Declare result var: 
+type (possible values "string", "number", "dataframe", "plot"). Examples: { "type": "string", "value": f"The highest salary is {highest_salary}." } or { "type": "number", "value": 125 } or { "type": "dataframe", "value": pd.DataFrame({...}) } or { "type": "plot", "value": "temp_chart.png" }
+
+```
+
+
+
+### QUERY
+ hi
+
+At the end, declare "result" variable as a dictionary of type and value.
+
+
+Generate python code and return full updated code:
+
+### Note: Use only relevant table for query and do aggregation, sorting, joins and grouby through sql query
+2025-08-21 16:30:29 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 16:30:29 [INFO] Code Generated:
+# TODO: import the required dependencies
+import pandas as pd
+
+# Write code here
+sql_query = """
+SELECT 
+    Product, 
+    SUM(Sales) AS Total_Sales, 
+    SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Product
+ORDER BY Total_Sales DESC
+LIMIT 5
+"""
+
+top_products_df = execute_sql_query(sql_query)
+
+# Declare result var: 
+result = { "type": "dataframe", "value": top_products_df }
+2025-08-21 16:30:29 [INFO] Validating code requirements...
+2025-08-21 16:30:29 [INFO] Code validation successful.
+2025-08-21 16:30:29 [INFO] Cleaning the generated code...
+2025-08-21 16:30:29 [INFO] Executing code: import pandas as pd
+sql_query = """
+SELECT 
+    Product, 
+    SUM(Sales) AS Total_Sales, 
+    SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Product
+ORDER BY Total_Sales DESC
+LIMIT 5
+"""
+top_products_df = execute_sql_query(sql_query)
+result = {'type': 'dataframe', 'value': top_products_df}
+2025-08-21 16:30:29 [INFO] Response generated successfully.
+2025-08-21 16:32:18 [INFO] Question: hi
+2025-08-21 16:32:18 [INFO] Running PandasAI with openai LLM...
+2025-08-21 16:32:18 [INFO] Prompt ID: eacd4b5d-e291-4afe-869f-8abcfbafe52c
+2025-08-21 16:32:18 [INFO] Generating new code...
+2025-08-21 16:32:18 [INFO] Using Prompt: <tables>
+
+<table dialect="duckdb" table_name="table_fb677c8e260ec54c3f3c30be1125b4ef" columns="[{"name": "Date", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Region", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "State", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "City", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Customer", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Segment", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Priority", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Category", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Subcategory", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Product", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Sales", "type": "integer", "description": null, "expression": null, "alias": null}, {"name": "Profit", "type": "integer", "description": null, "expression": null, "alias": null}]" dimensions="1000x12">
+Date,Region,State,City,Customer,Segment,Priority,Category,Subcategory,Product,Sales,Profit
+2021-12-01 00:00:00,East,Maryland,Bowie,Anita Hahn,Home Office,Not Specified,Office Supplies,Storage & Organization,Safco Industrial Wire Shelving,194,-425
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon 4070 Series Armless Uphol,1239,-309
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,White GlueTop Scratch Pads,157,109
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon Valutask Swivel Chairs,4083,-1680
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,Black Print Carbonless Snap-Of,34,20
+</table>
+
+
+</tables>
+
+You are already provided with the following functions that you can call:
+<function>
+def execute_sql_query(sql_query: str) -> pd.Dataframe
+    """This method connects to the database, executes the sql query and returns the dataframe"""
+</function>
+
+
+Update this initial code:
+```python
+# TODO: import the required dependencies
+import pandas as pd
+
+# Write code here
+
+# Declare result var: 
+type (possible values "string", "number", "dataframe", "plot"). Examples: { "type": "string", "value": f"The highest salary is {highest_salary}." } or { "type": "number", "value": 125 } or { "type": "dataframe", "value": pd.DataFrame({...}) } or { "type": "plot", "value": "temp_chart.png" }
+
+```
+
+
+
+### QUERY
+ hi
+
+At the end, declare "result" variable as a dictionary of type and value.
+
+
+Generate python code and return full updated code:
+
+### Note: Use only relevant table for query and do aggregation, sorting, joins and grouby through sql query
+2025-08-21 16:32:21 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 16:32:21 [INFO] Code Generated:
+# TODO: import the required dependencies
+import pandas as pd
+
+# Write code here
+sql_query = """
+SELECT 
+    Category, 
+    SUM(Sales) AS Total_Sales, 
+    SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Category
+ORDER BY Total_Sales DESC
+"""
+
+df = execute_sql_query(sql_query)
+
+# Declare result var: 
+result = { "type": "dataframe", "value": df }
+2025-08-21 16:32:21 [INFO] Validating code requirements...
+2025-08-21 16:32:21 [INFO] Code validation successful.
+2025-08-21 16:32:21 [INFO] Cleaning the generated code...
+2025-08-21 16:32:21 [INFO] Executing code: import pandas as pd
+sql_query = """
+SELECT 
+    Category, 
+    SUM(Sales) AS Total_Sales, 
+    SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Category
+ORDER BY Total_Sales DESC
+"""
+df = execute_sql_query(sql_query)
+result = {'type': 'dataframe', 'value': df}
+2025-08-21 16:32:21 [INFO] Response generated successfully.
+2025-08-21 16:33:26 [INFO] Question: hi
+2025-08-21 16:33:26 [INFO] Running PandasAI with openai LLM...
+2025-08-21 16:33:26 [INFO] Prompt ID: e71391e8-dce6-44a6-a34e-2a43722f4d28
+2025-08-21 16:33:26 [INFO] Generating new code...
+2025-08-21 16:33:26 [INFO] Using Prompt: <tables>
+
+<table dialect="duckdb" table_name="table_fb677c8e260ec54c3f3c30be1125b4ef" columns="[{"name": "Date", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Region", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "State", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "City", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Customer", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Segment", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Priority", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Category", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Subcategory", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Product", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Sales", "type": "integer", "description": null, "expression": null, "alias": null}, {"name": "Profit", "type": "integer", "description": null, "expression": null, "alias": null}]" dimensions="1000x12">
+Date,Region,State,City,Customer,Segment,Priority,Category,Subcategory,Product,Sales,Profit
+2021-12-01 00:00:00,East,Maryland,Bowie,Anita Hahn,Home Office,Not Specified,Office Supplies,Storage & Organization,Safco Industrial Wire Shelving,194,-425
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon 4070 Series Armless Uphol,1239,-309
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,White GlueTop Scratch Pads,157,109
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon Valutask Swivel Chairs,4083,-1680
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,Black Print Carbonless Snap-Of,34,20
+</table>
+
+
+</tables>
+
+You are already provided with the following functions that you can call:
+<function>
+def execute_sql_query(sql_query: str) -> pd.Dataframe
+    """This method connects to the database, executes the sql query and returns the dataframe"""
+</function>
+
+
+Update this initial code:
+```python
+# TODO: import the required dependencies
+import pandas as pd
+
+# Write code here
+
+# Declare result var: 
+type (possible values "string", "number", "dataframe", "plot"). Examples: { "type": "string", "value": f"The highest salary is {highest_salary}." } or { "type": "number", "value": 125 } or { "type": "dataframe", "value": pd.DataFrame({...}) } or { "type": "plot", "value": "temp_chart.png" }
+
+```
+
+
+
+### QUERY
+ hi
+
+At the end, declare "result" variable as a dictionary of type and value.
+
+
+Generate python code and return full updated code:
+
+### Note: Use only relevant table for query and do aggregation, sorting, joins and grouby through sql query
+2025-08-21 16:33:29 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 16:33:29 [INFO] Code Generated:
+# TODO: import the required dependencies
+import pandas as pd
+
+# Write code here
+sql_query = """
+SELECT 
+    Category,
+    SUM(Sales) AS Total_Sales,
+    SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Category
+ORDER BY Total_Sales DESC
+"""
+
+df = execute_sql_query(sql_query)
+
+# Declare result var: 
+result = { "type": "dataframe", "value": df }
+2025-08-21 16:33:29 [INFO] Validating code requirements...
+2025-08-21 16:33:29 [INFO] Code validation successful.
+2025-08-21 16:33:29 [INFO] Cleaning the generated code...
+2025-08-21 16:33:29 [INFO] Executing code: import pandas as pd
+sql_query = """
+SELECT 
+    Category,
+    SUM(Sales) AS Total_Sales,
+    SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Category
+ORDER BY Total_Sales DESC
+"""
+df = execute_sql_query(sql_query)
+result = {'type': 'dataframe', 'value': df}
+2025-08-21 16:33:29 [INFO] Response generated successfully.
+2025-08-21 16:34:09 [INFO] Question: hi
+2025-08-21 16:34:09 [INFO] Running PandasAI with openai LLM...
+2025-08-21 16:34:09 [INFO] Prompt ID: 5827fdfa-d529-4fc7-b8e7-54da4d456d64
+2025-08-21 16:34:09 [INFO] Generating new code...
+2025-08-21 16:34:09 [INFO] Using Prompt: <tables>
+
+<table dialect="duckdb" table_name="table_fb677c8e260ec54c3f3c30be1125b4ef" columns="[{"name": "Date", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Region", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "State", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "City", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Customer", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Segment", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Priority", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Category", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Subcategory", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Product", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Sales", "type": "integer", "description": null, "expression": null, "alias": null}, {"name": "Profit", "type": "integer", "description": null, "expression": null, "alias": null}]" dimensions="1000x12">
+Date,Region,State,City,Customer,Segment,Priority,Category,Subcategory,Product,Sales,Profit
+2021-12-01 00:00:00,East,Maryland,Bowie,Anita Hahn,Home Office,Not Specified,Office Supplies,Storage & Organization,Safco Industrial Wire Shelving,194,-425
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon 4070 Series Armless Uphol,1239,-309
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,White GlueTop Scratch Pads,157,109
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon Valutask Swivel Chairs,4083,-1680
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,Black Print Carbonless Snap-Of,34,20
+</table>
+
+
+</tables>
+
+You are already provided with the following functions that you can call:
+<function>
+def execute_sql_query(sql_query: str) -> pd.Dataframe
+    """This method connects to the database, executes the sql query and returns the dataframe"""
+</function>
+
+
+Update this initial code:
+```python
+# TODO: import the required dependencies
+import pandas as pd
+
+# Write code here
+
+# Declare result var: 
+type (possible values "string", "number", "dataframe", "plot"). Examples: { "type": "string", "value": f"The highest salary is {highest_salary}." } or { "type": "number", "value": 125 } or { "type": "dataframe", "value": pd.DataFrame({...}) } or { "type": "plot", "value": "temp_chart.png" }
+
+```
+
+
+
+### QUERY
+ hi
+
+At the end, declare "result" variable as a dictionary of type and value.
+
+
+Generate python code and return full updated code:
+
+### Note: Use only relevant table for query and do aggregation, sorting, joins and grouby through sql query
+2025-08-21 16:34:12 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 16:34:12 [INFO] Code Generated:
+# TODO: import the required dependencies
+import pandas as pd
+
+# Write code here
+sql_query = """
+SELECT 
+    Category, 
+    SUM(Sales) AS Total_Sales, 
+    SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Category
+ORDER BY Total_Sales DESC
+"""
+
+df = execute_sql_query(sql_query)
+
+# Declare result var: 
+result = { "type": "dataframe", "value": df }
+2025-08-21 16:34:12 [INFO] Validating code requirements...
+2025-08-21 16:34:12 [INFO] Code validation successful.
+2025-08-21 16:34:12 [INFO] Cleaning the generated code...
+2025-08-21 16:34:12 [INFO] Executing code: import pandas as pd
+sql_query = """
+SELECT 
+    Category, 
+    SUM(Sales) AS Total_Sales, 
+    SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Category
+ORDER BY Total_Sales DESC
+"""
+df = execute_sql_query(sql_query)
+result = {'type': 'dataframe', 'value': df}
+2025-08-21 16:34:12 [INFO] Response generated successfully.
+2025-08-21 16:34:51 [INFO] Question: Hello
+2025-08-21 16:34:51 [INFO] Running PandasAI with openai LLM...
+2025-08-21 16:34:51 [INFO] Prompt ID: 87861941-633f-44ab-8998-480c6a0a5ae6
+2025-08-21 16:34:51 [INFO] Generating new code...
+2025-08-21 16:34:51 [INFO] Using Prompt: <tables>
+
+<table dialect="duckdb" table_name="table_fb677c8e260ec54c3f3c30be1125b4ef" columns="[{"name": "Date", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Region", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "State", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "City", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Customer", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Segment", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Priority", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Category", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Subcategory", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Product", "type": "string", "description": null, "expression": null, "alias": null}, {"name": "Sales", "type": "integer", "description": null, "expression": null, "alias": null}, {"name": "Profit", "type": "integer", "description": null, "expression": null, "alias": null}]" dimensions="1000x12">
+Date,Region,State,City,Customer,Segment,Priority,Category,Subcategory,Product,Sales,Profit
+2021-12-01 00:00:00,East,Maryland,Bowie,Anita Hahn,Home Office,Not Specified,Office Supplies,Storage & Organization,Safco Industrial Wire Shelving,194,-425
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon 4070 Series Armless Uphol,1239,-309
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,White GlueTop Scratch Pads,157,109
+2021-12-02 00:00:00,East,New York,New York City,Scott Bunn,Corporate,Low,Furniture,Chairs & Chairmats,Hon Valutask Swivel Chairs,4083,-1680
+2021-12-02 00:00:00,West,California,Montebello,Alex Nicholson,Consumer,Critical,Office Supplies,Paper,Black Print Carbonless Snap-Of,34,20
+</table>
+
+
+</tables>
+
+You are already provided with the following functions that you can call:
+<function>
+def execute_sql_query(sql_query: str) -> pd.Dataframe
+    """This method connects to the database, executes the sql query and returns the dataframe"""
+</function>
+
+
+Update this initial code:
+```python
+# TODO: import the required dependencies
+import pandas as pd
+
+# Write code here
+
+# Declare result var: 
+type (possible values "string", "number", "dataframe", "plot"). Examples: { "type": "string", "value": f"The highest salary is {highest_salary}." } or { "type": "number", "value": 125 } or { "type": "dataframe", "value": pd.DataFrame({...}) } or { "type": "plot", "value": "temp_chart.png" }
+
+```
+
+
+
+### QUERY
+ Hello
+
+At the end, declare "result" variable as a dictionary of type and value.
+
+
+Generate python code and return full updated code:
+
+### Note: Use only relevant table for query and do aggregation, sorting, joins and grouby through sql query
+2025-08-21 16:34:57 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 16:34:57 [INFO] Code Generated:
+# TODO: import the required dependencies
+import pandas as pd
+
+# Write code here
+sql_query = """
+SELECT 
+    Category,
+    SUM(Sales) AS Total_Sales,
+    SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Category
+ORDER BY Total_Sales DESC
+"""
+
+df = execute_sql_query(sql_query)
+
+result = { "type": "dataframe", "value": df }
+2025-08-21 16:34:57 [INFO] Validating code requirements...
+2025-08-21 16:34:57 [INFO] Code validation successful.
+2025-08-21 16:34:57 [INFO] Cleaning the generated code...
+2025-08-21 16:34:57 [INFO] Executing code: import pandas as pd
+sql_query = """
+SELECT 
+    Category,
+    SUM(Sales) AS Total_Sales,
+    SUM(Profit) AS Total_Profit
+FROM table_fb677c8e260ec54c3f3c30be1125b4ef
+GROUP BY Category
+ORDER BY Total_Sales DESC
+"""
+df = execute_sql_query(sql_query)
+result = {'type': 'dataframe', 'value': df}
+2025-08-21 16:34:57 [INFO] Response generated successfully.
