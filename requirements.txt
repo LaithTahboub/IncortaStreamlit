@@ -35,8 +35,6 @@ openai==1.101.0
 openpyxl==3.1.5
 packaging==25.0
 pandas==2.3.2
-pandasai==3.0.0b19
-pandasai-openai==0.1.6
 patsy==1.0.1
 pillow==10.4.0
 plotly==6.3.0
