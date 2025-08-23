@@ -372,7 +372,6 @@ def setup_ai_chat(df):
 
 def create_key_insights(df):
     """Generate AI-powered key insights with statistical analysis"""
-    st.subheader("Key Insights - AI Statistical Analysis")
     st.markdown("Advanced analytics to identify trends, anomalies, and areas requiring attention")
     
     # Add specific CSS for Key Insights section
@@ -695,7 +694,7 @@ def create_key_insights(df):
     
 
     with tab1:
-        st.subheader("Correlation Analysis")
+        st.markdown("### Correlation Analysis")
 
         # --- Setup & selection ---
         all_columns = df.columns.tolist()
@@ -935,7 +934,7 @@ def create_key_insights(df):
                 st.markdown(f"• Range: {df_work[selected_var].min():.2f} - {df_work[selected_var].max():.2f}")
 
     with tab2:
-        st.subheader("Anomaly Detection")
+        st.markdown("### Anomaly Detection")
         
         # Select primary metric for anomaly detection
         sales_col = 'Sales' if 'Sales' in df.columns else 'Amount' if 'Amount' in df.columns else numeric_cols[0]
@@ -1016,7 +1015,7 @@ def create_key_insights(df):
                 st.markdown(f"• Normal range: {df[sales_col].mean() - 2*df[sales_col].std():,.2f} to {df[sales_col].mean() + 2*df[sales_col].std():,.2f}")
     
     with tab3:
-        st.subheader("Trend Analysis")
+        st.markdown("### Trend Analysis")
         
         # Time-based analysis if date column exists
         date_cols = [col for col in df.columns if 'date' in col.lower() or 'time' in col.lower()]
@@ -1077,7 +1076,7 @@ def create_key_insights(df):
                 st.markdown(f"Distribution has **{kurt_interpretation}**")
     
     with tab4:
-        st.subheader("AI Recommendations")
+        st.markdown("### AI Recommendations")
         
         recommendations = []
         
@@ -1199,7 +1198,6 @@ def create_supply_chain_visualizations(df):
     """Create specialized visualizations for supply chain data"""
     
     # Data overview metrics
-    st.subheader("Supply Chain Dashboard")
     
     # Key metrics row
     col1, col2, col3, col4 = st.columns(4)
@@ -1403,14 +1401,52 @@ def main():
     # Store dataframe in session state for AI chat
     st.session_state.current_dataframe = df
     
-    # AI Chat Interface (at the top)
-    setup_ai_chat(df)
+    # Add CSS for section panels
+    st.markdown("""
+    <style>
+    /* Style the container that holds each section */
+    div[data-testid="stVerticalBlock"] > div[data-testid="element-container"] {
+        background-color: #f8f9fa !important;
+        border-radius: 10px !important;
+        padding: 20px !important;
+        margin: 20px 0 !important;
+        border: 1px solid #e9ecef !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+    }
     
-    # Key Insights with Statistical Analysis
-    create_key_insights(df)
+    div[data-testid="stVerticalBlock"] > div[data-testid="element-container"]:hover {
+        background-color: #e3f2fd !important;
+        border-color: #bbdefb !important;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+        transform: translateY(-2px) !important;
+    }
     
-    # Data visualizations
-    create_supply_chain_visualizations(df)
+    .section-header {
+        color: #1976d2 !important;
+        font-size: 2rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 15px !important;
+        border-bottom: 2px solid #e9ecef !important;
+        padding-bottom: 10px !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Data Assistant Section
+    with st.container():
+        st.markdown('<h2 class="section-header section-header-1">Data Assistant</h2>', unsafe_allow_html=True)
+        setup_ai_chat(df)
+    
+    # Statistical Analysis Section
+    with st.container():
+        st.markdown('<h2 class="section-header section-header-2">Statistical Analysis</h2>', unsafe_allow_html=True)
+        create_key_insights(df)
+    
+    # Supply Chain Dashboard Section
+    with st.container():
+        st.markdown('<h2 class="section-header section-header-3">Supply Chain Dashboard</h2>', unsafe_allow_html=True)
+        create_supply_chain_visualizations(df)
 
 if __name__ == "__main__":
     main()

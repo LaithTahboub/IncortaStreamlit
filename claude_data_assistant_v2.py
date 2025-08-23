@@ -435,7 +435,6 @@ IMPORTANT INSTRUCTIONS:
 
 def setup_controlled_claude_assistant(df: pd.DataFrame, api_key: str):
     """Setup controlled Claude assistant interface"""
-    st.subheader("Data Assistant")
     st.markdown("Ask questions about your data and get structured analysis")
     
     if not api_key:
@@ -498,7 +497,7 @@ def setup_controlled_claude_assistant(df: pd.DataFrame, api_key: str):
             with col1:
                 user_question = st.text_area(
                     "Ask a question about your data:",
-                    placeholder="e.g., 'What are the top 3 customers by total sales and what makes them valuable?'",
+                    placeholder="e.g., 'Who are the top 3 customers by total sales and what makes them valuable?'",
                     height=80,
                     label_visibility="collapsed",
                     key="controlled_claude_input"
