@@ -163,18 +163,18 @@ class IncortaConnector:
                 st.info(f"Response Headers: {dict(response.headers)}")
                 
                 if response.status_code == 200:
-                    st.success(f"✅ Success with pattern {i+1}!")
+                    st.success(f"Success with pattern {i+1}!")
                     return response.json()
                 elif response.status_code == 401:
-                    st.error(f"❌ Pattern {i+1}: Authentication failed - check PAT token")
+                    st.error(f"Pattern {i+1}: Authentication failed - check PAT token")
                 elif response.status_code == 403:
-                    st.error(f"❌ Pattern {i+1}: Access forbidden - check permissions")
+                    st.error(f"Pattern {i+1}: Access forbidden - check permissions")
                 elif response.status_code == 404:
-                    st.warning(f"⚠️ Pattern {i+1}: Endpoint not found")
+                    st.warning(f"Pattern {i+1}: Endpoint not found")
                 elif response.status_code == 503:
-                    st.error(f"❌ Pattern {i+1}: Service unavailable")
+                    st.error(f"Pattern {i+1}: Service unavailable")
                 else:
-                    st.warning(f"⚠️ Pattern {i+1}: HTTP {response.status_code}")
+                    st.warning(f"Pattern {i+1}: HTTP {response.status_code}")
                     
                 # Try to get response text for debugging
                 try:
@@ -185,11 +185,11 @@ class IncortaConnector:
                     pass
                     
             except requests.exceptions.Timeout:
-                st.error(f"❌ Pattern {i+1}: Request timeout")
+                st.error(f"Pattern {i+1}: Request timeout")
             except requests.exceptions.ConnectionError:
-                st.error(f"❌ Pattern {i+1}: Connection error")
+                st.error(f"Pattern {i+1}: Connection error")
             except Exception as e:
-                st.error(f"❌ Pattern {i+1}: {str(e)}")
+                st.error(f"Pattern {i+1}: {str(e)}")
         
         st.error("All URL patterns failed")
         return None

@@ -13,6 +13,9 @@ class Config:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
     OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4")
     
+    # Anthropic Configuration
+    ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+    
     # Incorta Configuration
     INCORTA_INSTANCE_URL = os.getenv("INCORTA_INSTANCE_URL", "se-prod-demo.cloud4.incorta.com")
     INCORTA_TENANT = os.getenv("INCORTA_TENANT", "demo")

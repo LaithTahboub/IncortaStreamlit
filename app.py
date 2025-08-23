@@ -8,6 +8,7 @@ from datetime import datetime
 from config import Config
 from data_utils import load_sample_data
 from incorta_connector import IncortaConnector, convert_incorta_to_dataframe
+from claude_data_assistant_v2 import setup_controlled_claude_assistant
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
@@ -20,19 +21,13 @@ import math
 import warnings
 warnings.filterwarnings('ignore')
 
-# PandasAI imports
-try:
-    import pandasai as pai
-    from pandasai_openai.openai import OpenAI
-    PANDASAI_AVAILABLE = True
-except ImportError as e:
-    PANDASAI_AVAILABLE = False
-    print(f"PandasAI import error: {e}")
+# AI Assistant imports
+import anthropic
 
 # Page configuration
 st.set_page_config(
-    page_title="Data Analytics with AI Chat",
-    page_icon="💬",
+    page_title="Get the Most Out of Your Data",
+    page_icon="📊",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -370,122 +365,14 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def setup_ai_chat(df):
-    """Setup AI chat interface"""
-    # st.markdown('<div class="chat-container">', unsafe_allow_html=True)
-    st.subheader("✨ AI Data Assistant")
-    st.markdown("Ask questions about your data in natural language")
-    
-    if not PANDASAI_AVAILABLE:
-        st.error("PandasAI is not available. Please install required dependencies.")
-        st.code("pip install pandasai-openai")
-        st.markdown('</div>', unsafe_allow_html=True)
-        return
-    
-    # OpenAI configuration
-    openai_api_key = Config.OPENAI_API_KEY
-    
-    if not openai_api_key:
-        st.warning("Please configure OpenAI API key in your .env file to use the AI assistant.")
-        st.info("Add this to your .env file:")
-        st.code("OPENAI_API_KEY=your_openai_api_key_here")
-        st.markdown('</div>', unsafe_allow_html=True)
-        return
-    
-    try:
-        # Initialize PandasAI with OpenAI LLM
-        if not OpenAI:
-            st.error("OpenAI class not available")
-            st.markdown('</div>', unsafe_allow_html=True)
-            return
-        
-        # Set OpenAI API key as environment variable
-        os.environ["OPENAI_API_KEY"] = openai_api_key
-        
-        # Create OpenAI LLM instance
-        llm = OpenAI(api_token=openai_api_key)
-        
-        # Configure PandasAI to use OpenAI LLM
-        pai.config.set({
-            "llm": llm,
-            "temperature": 0.1,
-            "verbose": False
-        })
-        
-        # Create DataFrame using PandasAI's DataFrame
-        pai_df = pai.DataFrame(df)
-        
-        
-        # Initialize chat history
-        if "chat_history" not in st.session_state:
-            st.session_state.chat_history = []
-        
-        # Display chat history
-        if st.session_state.chat_history:
-            for message in st.session_state.chat_history:
-                if message["role"] == "user":
-                    st.markdown(f'<div class="chat-message-user">{message["content"]}</div>', unsafe_allow_html=True)
-                else:
-                    st.markdown(f'<div class="chat-message-assistant">{message["content"]}</div>', unsafe_allow_html=True)
-        
-        # Chat input with form for Enter key support
-        with st.form(key="chat_form", clear_on_submit=True):
-            col1, col2 = st.columns([4, 1])
-            with col1:
-                user_question = st.text_input(
-                    "Ask a question about your data:",
-                    placeholder="e.g., 'What is the average value by category?'",
-                    label_visibility="collapsed",
-                    key="user_input"
-                )
-            with col2:
-                send_button = st.form_submit_button("Send", type="primary")
-        
-        # Clear chat button only
-        if st.button("Clear Chat"):
-            st.session_state.chat_history = []
-            st.rerun()
-        
-        if send_button and user_question:
-            try:
-                # Add user message to history
-                st.session_state.chat_history.append({"role": "user", "content": user_question})
-                
-                # Get AI response
-                with st.spinner("Analyzing data..."):
-                    if pai_df is None:
-                        raise ValueError("PandasAI DataFrame is not initialized")
-                    if not user_question or user_question.strip() == "":
-                        raise ValueError("Question cannot be empty")
-                    
-                    response = pai_df.chat(user_question)
-                    
-                    # Validate response
-                    if response is None:
-                        response_text = "I couldn't generate a response for that question. Please try rephrasing."
-                    else:
-                        response_text = str(response).strip()
-                        if not response_text:
-                            response_text = "I received an empty response. Please try a different question."
-                
-                # Add AI response to history
-                st.session_state.chat_history.append({"role": "assistant", "content": response_text})
-                
-                # Rerun to update chat display
-                st.rerun()
-                
-            except Exception as e:
-                st.error(f"Error getting AI response: {str(e)}")
-                st.info("Please check your OpenAI configuration and try again.")
-        
-    except Exception as e:
-        st.error(f"Error setting up AI assistant: {str(e)}")
-        st.info("Please verify your OpenAI configuration in the .env file")
-    
-    st.markdown('</div>', unsafe_allow_html=True)
+    """Setup controlled Claude AI chat interface"""
+    # Use controlled Claude assistant
+    anthropic_api_key = Config.ANTHROPIC_API_KEY
+    setup_controlled_claude_assistant(df, anthropic_api_key)
 
 def create_key_insights(df):
     """Generate AI-powered key insights with statistical analysis"""
-    st.subheader("🔍 Key Insights - AI Statistical Analysis")
+    st.subheader("Key Insights - AI Statistical Analysis")
     st.markdown("Advanced analytics to identify trends, anomalies, and areas requiring attention")
     
     # Add specific CSS for Key Insights section
@@ -512,7 +399,13 @@ def create_key_insights(df):
     .stMarkdown p, .stMarkdown li, .stMarkdown span {
         color: black !important;
     }
+
+    .infolayer {
+        color: black !important;            
+        opacity: 1 !important;
+    }
     
+
     /* Tab content area */
     .stTabs > div > div > div > div {
         color: black !important;
@@ -544,6 +437,47 @@ def create_key_insights(df):
         color: black !important;
     }
     
+    /* Code blocks - fix dark background */
+    .stCode {
+        background-color: #f8f9fa !important;
+        color: black !important;
+        border: 1px solid #e9ecef !important;
+    }
+    
+    .stCode > div {
+        background-color: #f8f9fa !important;
+        color: black !important;
+    }
+    
+    .stCode pre {
+        background-color: #f8f9fa !important;
+        color: black !important;
+    }
+    
+    .stCode code {
+        background-color: #f8f9fa !important;
+        color: black !important;
+    }
+    
+    /* Text areas */
+    .stTextArea > div > div > textarea {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid #e9ecef !important;
+    }
+
+    .stTextArea [data-baseweb=base-input] {
+    background-color: #f0f2f6; /* Light gray background */
+    -webkit-text-fill-color: #333333; /* Dark gray text */
+}
+
+                
+    
+    .stTextArea textarea {
+        background-color: white !important;
+        color: black !important;
+    }
+    
     /* Dropdown/selectbox styling */
     .stSelectbox > div > div {
         background-color: white !important;
@@ -558,6 +492,57 @@ def create_key_insights(df):
     [data-testid="stSelectbox"] > div > div > div {
         background-color: white !important;
     }
+    
+    /* Fix any remaining dark backgrounds */
+    [data-testid="stVerticalBlock"] > div {
+        background-color: white !important;
+    }
+    
+    /* Ensure code syntax highlighting uses light theme */
+    .stCode .hljs {
+        background-color: #f8f9fa !important;
+        color: black !important;
+    }
+    
+    .stCode .hljs-keyword {
+        color: #0066cc !important;
+    }
+    
+    .stCode .hljs-string {
+        color: #009900 !important;
+    }
+    
+    .stCode .hljs-comment {
+        color: #666666 !important;
+    }
+    
+    /* Additional text area fixes */
+    textarea {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid #e9ecef !important;
+    }
+    
+    /* Form controls */
+    .stForm {
+        background-color: white !important;
+    }
+    
+    .stForm > div {
+        background-color: white !important;
+    }
+    
+    /* Chat message styling to ensure proper contrast */
+    .chat-message-user {
+        background-color: #007bff !important;
+        color: white !important;
+    }
+    
+    .chat-message-assistant {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid #e9ecef !important;
+    }
     </style>
     """, unsafe_allow_html=True)
     
@@ -570,7 +555,7 @@ def create_key_insights(df):
         return
     
     # Create tabs for different types of insights
-    tab1, tab2, tab3, tab4 = st.tabs(["🔗 Correlations", "⚠️ Anomalies", "📈 Trends", "🎯 Recommendations"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Correlations", "Anomalies", "Trends", "Recommendations"])
     
 
     with tab1:
@@ -1270,7 +1255,7 @@ def main():
     """Main application function"""
     
     # Title
-    st.title("Supply Chain Analytics with AI")
+    st.title("Get the Most Out of Your Data")
     st.markdown("Analyze your supply chain data and ask questions in natural language")
     
     # Load data
