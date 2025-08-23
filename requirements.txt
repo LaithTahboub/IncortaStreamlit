@@ -1,7 +1,5 @@
 streamlit>=1.28.0
 pandas>=1.5.0
-pandasai>=3.0.0b19
-pandasai-openai
 plotly>=5.0.0
 python-dotenv
 requests

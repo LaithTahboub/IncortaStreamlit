@@ -416,6 +416,17 @@ def create_key_insights(df):
         color: black !important;
     }
     
+    /* Tab buttons padding */
+    .stTabs [data-baseweb="tab"] {
+        padding: 8px 20px !important;
+        margin: 0 4px !important;
+    }
+    
+    /* Tab list container */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px !important;
+    }
+    
     /* Expander headers in Key Insights */
     .stExpander > details > summary {
         background-color: white !important;
@@ -478,7 +489,7 @@ def create_key_insights(df):
         color: black !important;
     }
     
-    /* Dropdown/selectbox styling */
+    /* Dropdown/selectbox styling - comprehensive */
     .stSelectbox > div > div {
         background-color: white !important;
     }
@@ -491,6 +502,89 @@ def create_key_insights(df):
     /* Dropdown menu when opened */
     [data-testid="stSelectbox"] > div > div > div {
         background-color: white !important;
+    }
+    
+    /* All selectbox elements */
+    .stSelectbox {
+        background-color: white !important;
+    }
+    
+    .stSelectbox * {
+        background-color: white !important;
+        color: black !important;
+    }
+    
+    /* Hide dropdown arrow */
+    .stSelectbox svg {
+        display: none !important;
+    }
+    
+    /* Alternative: make arrow black if you want to keep it */
+    /* .stSelectbox svg {
+        color: black !important;
+        fill: black !important;
+    } */
+    
+    /* Selected value display */
+    .stSelectbox [data-baseweb="select"] {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid #e9ecef !important;
+    }
+    
+    /* Dropdown menu items */
+    .stSelectbox [data-baseweb="menu"] {
+        background-color: white !important;
+    }
+    
+    .stSelectbox [data-baseweb="menu"] > li {
+        background-color: white !important;
+        color: black !important;
+    }
+    
+    .stSelectbox [data-baseweb="menu"] > li:hover {
+        background-color: #f8f9fa !important;
+        color: black !important;
+    }
+    
+    /* Multi-select components */
+    .stMultiSelect {
+        background-color: white !important;
+    }
+    
+    .stMultiSelect * {
+        background-color: white !important;
+        color: black !important;
+    }
+    
+    /* Additional dropdown background fixes */
+    [role="listbox"] {
+        background-color: white !important;
+    }
+    
+    [role="option"] {
+        background-color: white !important;
+        color: black !important;
+    }
+    
+    [role="option"]:hover {
+        background-color: #f8f9fa !important;
+        color: black !important;
+    }
+    
+    /* Dropdown overlay and container */
+    .stSelectbox [data-baseweb="popover"] {
+        background-color: white !important;
+    }
+    
+    .stSelectbox [data-baseweb="popover"] > div {
+        background-color: white !important;
+    }
+    
+    /* Fix any remaining dark dropdown backgrounds */
+    div[data-baseweb="select"] > div {
+        background-color: white !important;
+        color: black !important;
     }
     
     /* Fix any remaining dark backgrounds */
@@ -542,6 +636,48 @@ def create_key_insights(df):
         background-color: white !important;
         color: black !important;
         border: 1px solid #e9ecef !important;
+    }
+    
+    /* Plotly chart text styling - force all text to be black */
+    .js-plotly-plot .plotly .xtick text,
+    .js-plotly-plot .plotly .ytick text,
+    .js-plotly-plot .plotly .xtitle text,
+    .js-plotly-plot .plotly .ytitle text,
+    .js-plotly-plot .plotly .g-xtitle text,
+    .js-plotly-plot .plotly .g-ytitle text,
+    .js-plotly-plot .plotly .colorbar text,
+    .js-plotly-plot .plotly text {
+        fill: black !important;
+        color: black !important;
+    }
+    
+    /* Plotly axis labels */
+    .js-plotly-plot .plotly .xaxis .tick text,
+    .js-plotly-plot .plotly .yaxis .tick text {
+        fill: black !important;
+    }
+    
+    /* Plotly title and axis titles */
+    .js-plotly-plot .plotly .g-gtitle text,
+    .js-plotly-plot .plotly .g-xtitle text,
+    .js-plotly-plot .plotly .g-ytitle text {
+        fill: black !important;
+    }
+    
+    /* Additional SVG text elements */
+    .js-plotly-plot svg text {
+        fill: black !important;
+    }
+    
+    /* Plotly modebar and controls */
+    .js-plotly-plot .plotly .modebar {
+        color: black !important;
+    }
+    
+    /* All SVG elements in plotly charts */
+    .js-plotly-plot .plotly svg .xtick text,
+    .js-plotly-plot .plotly svg .ytick text {
+        fill: black !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -771,9 +907,12 @@ def create_key_insights(df):
                 fig_corr.update_layout(
                     plot_bgcolor='white',
                     paper_bgcolor='white',
-                    font=dict(color='black'),
+                    font=dict(color='black', family='Arial, sans-serif', size=12),
                     height=400
                 )
+                # Update axis text colors
+                fig_corr.update_xaxes(tickfont=dict(color='black'))
+                fig_corr.update_yaxes(tickfont=dict(color='black'))
                 st.plotly_chart(fig_corr, use_container_width=True)
 
             # Additional notes
