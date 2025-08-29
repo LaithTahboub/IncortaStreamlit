@@ -5,7 +5,11 @@
       "WebFetch(domain:docs.pandas-ai.com)",
       "Bash(python:*)",
       "Bash(rm:*)",
-      "Bash(streamlit run:*)"
+      "Bash(streamlit run:*)",
+      "Read(//var/folders/6q/4v6qtvz916z4tv9jwpx7trw00000gn/T/TemporaryItems/NSIRD_screencaptureui_wADUGL/**)",
+      "Read(//var/folders/6q/4v6qtvz916z4tv9jwpx7trw00000gn/T/TemporaryItems/NSIRD_screencaptureui_0bKEvX/**)",
+      "Read(//var/folders/6q/4v6qtvz916z4tv9jwpx7trw00000gn/T/TemporaryItems/NSIRD_screencaptureui_QRnMTR/**)",
+      "Read(/var/folders/6q/4v6qtvz916z4tv9jwpx7trw00000gn/T/TemporaryItems/NSIRD_screencaptureui_XISJ7C/**)"
     ],
     "deny": [],
     "ask": []

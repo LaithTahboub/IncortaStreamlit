@@ -1,0 +1,418 @@
+/* ===== GLOBAL THEME STYLES ===== */
+:root {
+    --primary-bg: #ffffff;
+    --secondary-bg: #f8f9fa;
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --border-color: #e9ecef;
+    --accent-blue: #007bff;
+    --shadow-light: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-medium: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Force light theme across all Streamlit components */
+.stApp, .main, div[data-testid="stVerticalBlock"], 
+.element-container, div[class*="block-container"] {
+    background-color: var(--primary-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+/* All text elements */
+h1, h2, h3, h4, h5, h6, p, div, span, label, .stMarkdown * {
+    color: var(--text-primary) !important;
+}
+
+/* ===== CHAT INTERFACE STYLES ===== */
+.chat-message-user {
+    background-color: var(--accent-blue) !important;
+    color: white !important;
+    padding: 0.75rem 1rem;
+    border-radius: 18px 18px 4px 18px;
+    margin: 0.5rem 0 0.5rem 20%;
+    box-shadow: var(--shadow-medium);
+}
+
+.chat-message-user * {
+    color: white !important;
+    background-color: transparent !important;
+}
+
+.chat-message-assistant {
+    background-color: var(--primary-bg) !important;
+    color: var(--text-secondary) !important;
+    padding: 0.75rem 1rem;
+    border-radius: 18px 18px 18px 4px;
+    margin: 0.5rem 20% 0.5rem 0;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-medium);
+}
+
+/* ===== FORM AND INPUT STYLES ===== */
+.stTextInput > div > div > input,
+.stTextArea > div > div > textarea,
+.stSelectbox > div > div,
+input, textarea {
+    background-color: var(--primary-bg) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px;
+}
+
+/* Fix placeholder text visibility */
+.stTextArea textarea::placeholder {
+    color: #666666 !important;
+    opacity: 1 !important;
+}
+
+input::placeholder, textarea::placeholder {
+    color: #666666 !important;
+    opacity: 1 !important;
+}
+
+.stSelectbox *, .stMultiSelect * {
+    background-color: var(--primary-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+[role="listbox"], [role="option"] {
+    background-color: var(--primary-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+[role="option"]:hover {
+    background-color: var(--secondary-bg) !important;
+}
+
+/* ===== BUTTON STYLES ===== */
+.stButton > button {
+    border-radius: 20px !important;
+    border: 1px solid var(--accent-blue) !important;
+    background-color: var(--primary-bg) !important;
+    color: var(--accent-blue) !important;
+    transition: all 0.3s ease !important;
+}
+
+.stButton > button:hover {
+    background-color: var(--accent-blue) !important;
+    color: white !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(0,123,255,0.3) !important;
+}
+
+button[kind="formSubmit"] {
+    background-color: var(--accent-blue) !important;
+    color: white !important;
+    border: 1px solid var(--accent-blue) !important;
+    border-radius: 8px !important;
+}
+
+/* Fix button text visibility - ensure all buttons have proper contrast */
+button {
+    background-color: var(--primary-bg) !important;
+    color: var(--accent-blue) !important;
+    border: 1px solid var(--accent-blue) !important;
+}
+
+button:hover {
+    background-color: var(--accent-blue) !important;
+    color: white !important;
+}
+
+/* Specific fix for form submit buttons with different styling */
+button[type="submit"] {
+    background-color: var(--accent-blue) !important;
+    color: white !important;
+}
+
+/* ===== DATA DISPLAY STYLES ===== */
+.stDataFrame, .stDataFrame > div, .stDataFrame table {
+    background-color: var(--primary-bg) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color);
+}
+
+.stDataFrame th {
+    background-color: var(--secondary-bg) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.stDataFrame td {
+    background-color: var(--primary-bg) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+table, th, td, tr {
+    background-color: var(--primary-bg) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+/* ===== CONTAINER AND LAYOUT STYLES ===== */
+.stMetric {
+    background-color: var(--primary-bg) !important;
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-light);
+}
+
+/* Fix metric font sizes */
+.stMetric [data-testid="metric-container"] {
+    font-size: 0.9rem !important;
+}
+
+.stMetric [data-testid="metric-container"] > div:first-child {
+    font-size: 0.85rem !important;
+    color: var(--text-secondary) !important;
+}
+
+.stMetric [data-testid="metric-container"] > div:last-child {
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+}
+
+.stExpander {
+    background-color: var(--primary-bg) !important;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.streamlit-expanderHeader {
+    background-color: var(--primary-bg) !important;
+    color: var(--text-primary) !important;
+    border: none !important;
+    border-radius: 8px;
+}
+
+.streamlit-expanderContent {
+    background-color: var(--primary-bg) !important;
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+}
+
+/* Additional expander header fixes */
+[data-testid="stExpander"] > details > summary {
+    background-color: var(--primary-bg) !important;
+    color: var(--text-primary) !important;
+    border: none !important;
+}
+
+[data-testid="stExpander"] > details > summary:hover {
+    background-color: var(--primary-bg) !important;
+}
+
+/* ===== ALERT STYLES ===== */
+.stSuccess {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+    border-color: #c3e6cb !important;
+}
+
+.stError {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+    border-color: #f5c6cb !important;
+}
+
+.stInfo {
+    background-color: #d1ecf1 !important;
+    color: #0c5460 !important;
+    border-color: #bee5eb !important;
+}
+
+/* ===== TAB STYLES ===== */
+.stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p,
+.stTabs [data-baseweb="tab"],
+.stTabs [data-baseweb="tab-list"],
+.stTabs > div > div > div > div,
+.stTabs * {
+    color: var(--text-primary) !important;
+}
+
+.stTabs [data-baseweb="tab"] {
+    padding: 8px 20px !important;
+    margin: 0 4px !important;
+    border: none !important;
+    background-color: transparent !important;
+}
+
+.stTabs [data-baseweb="tab"]:hover {
+    border: none !important;
+    background-color: var(--secondary-bg) !important;
+}
+
+.stTabs [data-baseweb="tab"][aria-selected="true"] {
+    border: none !important;
+    border-bottom: 2px solid var(--accent-blue) !important;
+    background-color: transparent !important;
+}
+
+.stTabs [data-baseweb="tab-list"] {
+    gap: 8px !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* ===== CODE AND SYNTAX STYLES ===== */
+.stCode, .stCode > div, .stCode pre, .stCode code {
+    background-color: var(--secondary-bg) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.stCode .hljs {
+    background-color: var(--secondary-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+.stCode .hljs-keyword { color: #0066cc !important; }
+.stCode .hljs-string { color: #009900 !important; }
+.stCode .hljs-comment { color: #666666 !important; }
+
+/* Fix expander header background and remove hover effects */
+.stExpander > details > summary {
+    background-color: var(--primary-bg) !important;
+    color: var(--text-primary) !important;
+    border: none !important;
+}
+
+.stExpander > details > summary:hover {
+    background-color: var(--primary-bg) !important;
+    color: var(--text-primary) !important;
+    transform: none !important;
+}
+
+/* Remove ALL hover tint effects - comprehensive targeting */
+.stExpander:hover,
+div[data-testid="stExpander"]:hover,
+div[data-testid="stExpander"] > div:hover,
+.stExpander > details:hover,
+.stExpander > details > div:hover,
+.stExpander *:hover,
+div[data-testid="stExpander"] *:hover {
+    background-color: var(--primary-bg) !important;
+    transform: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+}
+
+/* ===== FIX CODE HOVER VISIBILITY ===== */
+/* Ensure code blocks maintain readable text on hover */
+.stCode:hover,
+.stCode *:hover,
+.stCode pre:hover,
+.stCode code:hover {
+    background-color: var(--secondary-bg) !important;
+    color: var(--text-primary) !important;
+    transform: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+}
+
+/* Fix code syntax highlighting on hover */
+.stCode:hover .hljs-keyword,
+.stCode *:hover .hljs-keyword { 
+    color: #0066cc !important; 
+}
+
+.stCode:hover .hljs-string,
+.stCode *:hover .hljs-string { 
+    color: #009900 !important; 
+}
+
+.stCode:hover .hljs-comment,
+.stCode *:hover .hljs-comment { 
+    color: #666666 !important; 
+}
+
+/* Ensure all text in code blocks remains visible */
+.stCode:hover *,
+.stCode *:hover * {
+    color: inherit !important;
+    background-color: transparent !important;
+}
+
+/* Force expander content background */
+.stExpander > details > div {
+    background-color: var(--primary-bg) !important;
+}
+
+.section-header {
+    color: #1976d2 !important;
+    font-size: 1.75rem !important;
+    font-weight: 600 !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.75rem !important;
+    border-bottom: 2px solid var(--border-color) !important;
+    padding-bottom: 0.5rem !important;
+}
+
+/* ===== PLOTLY CHART STYLES ===== */
+.plotly {
+    color: var(--text-primary) !important;
+    background-color: var(--primary-bg) !important;
+}
+
+.js-plotly-plot .plotly .xtick text,
+.js-plotly-plot .plotly .ytick text,
+.js-plotly-plot .plotly .xtitle text,
+.js-plotly-plot .plotly .ytitle text,
+.js-plotly-plot .plotly .g-xtitle text,
+.js-plotly-plot .plotly .g-ytitle text,
+.js-plotly-plot .plotly .colorbar text,
+.js-plotly-plot .plotly text,
+.js-plotly-plot svg text {
+    fill: var(--text-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+.js-plotly-plot .plotly .modebar {
+    color: var(--text-primary) !important;
+}
+
+/* ===== FIX PLOTLY TOOLTIP VISIBILITY ===== */
+/* Fix Plotly hover tooltips */
+.hoverlayer .hovertext {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    color: white !important;
+    border: 1px solid #666 !important;
+    font-size: 12px !important;
+}
+
+.hoverlayer .hovertext .name {
+    color: white !important;
+}
+
+.hoverlayer .hovertext .nums {
+    color: white !important;
+}
+
+/* Alternative tooltip fix */
+g.hoverlayer g.hovertext {
+    fill: white !important;
+}
+
+g.hoverlayer g.hovertext path {
+    fill: rgba(0, 0, 0, 0.8) !important;
+    stroke: #666 !important;
+}
+
+g.hoverlayer g.hovertext text {
+    fill: white !important;
+    color: white !important;
+}
+
+.st-emotion-cache-efbu8t {
+    font-size: 30px !important;
+}
+
+/* ===== DATAFRAME TABLE STYLING ===== */
+
+.stElementContainer element-container st-emotion-cache-1vo6xi6 {
+    background-color: white;
+}

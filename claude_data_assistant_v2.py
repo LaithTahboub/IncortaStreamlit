@@ -120,11 +120,9 @@ The code should:
 - Use the dataframe 'df' that's already available
 - Perform the necessary analysis to answer the question
 - Store key results in variables for later explanation
-- ALWAYS include print statements to show results
 - Print the final answer/findings in a clear format
 - Create visualizations if helpful (using px or go)
 
-IMPORTANT: Make sure to print() the key results so they can be seen in the output!
 
 IMPORTANT: 
 - Do NOT include any import statements (pandas is pd, numpy is np, plotly.express is px, etc.)
@@ -255,10 +253,18 @@ IMPORTANT INSTRUCTIONS:
                     if var_value not in figures:
                         figures.append(var_value)
             
+            # Capture any DataFrames created for table display
+            dataframes = []
+            for var_name, var_value in combined_namespace.items():
+                if isinstance(var_value, pd.DataFrame) and var_name != 'df' and not var_name.startswith('_'):
+                    dataframes.append({'name': var_name, 'data': var_value})
+            
             return {
                 'success': True,
                 'output': output,
                 'figures': figures,
+                'dataframes': dataframes,
+                'locals': self.execution_locals,
                 'error': None
             }
             
@@ -268,6 +274,8 @@ IMPORTANT INSTRUCTIONS:
                 'success': False,
                 'output': captured_output.getvalue(),
                 'figures': [],
+                'dataframes': [],
+                'locals': {},
                 'error': str(e)
             }
     
@@ -352,13 +360,19 @@ IMPORTANT INSTRUCTIONS:
             with progress_container.container():
                 st.markdown("**Code executed successfully**")
                 
-                # Debug: Show what we captured
+                # Show any DataFrames as proper tables
+                if 'dataframes' in execution_result and execution_result['dataframes']:
+                    for df_info in execution_result['dataframes']:
+                        st.markdown(f"**{df_info['name']}:**")
+                        st.dataframe(df_info['data'], use_container_width=True)
+                
+                # Show text output only if it's meaningful and not just DataFrame representations
                 if execution_result['output'].strip():
-                    st.markdown("**Code Output:**")
-                    st.text(execution_result['output'])
-                else:
-                    # Don't show analysis results section - it's not needed for the user
-                    pass
+                    output_text = execution_result['output'].strip()
+                    # Skip output that looks like DataFrame string representations
+                    if not (output_text.count('    ') > 5 and ('|' in output_text or output_text.count('\n') > 3)):
+                        st.markdown("**Code Output:**")
+                        st.text(execution_result['output'])
                 
                 # Show any figures
                 for fig in execution_result['figures']:
@@ -371,24 +385,39 @@ IMPORTANT INSTRUCTIONS:
                     st.plotly_chart(fig, use_container_width=True)
             
             # Step 4: Stream Claude's final conclusion
-            # Create comprehensive data summary including variables if print output is empty
+            # Create comprehensive data summary for final answer
+            data_for_prompt_parts = []
+            
+            # Include print output if meaningful
             if execution_result['output'].strip():
-                data_for_prompt = execution_result['output']
-            else:
-                # Use variable contents since print didn't work
+                output_text = execution_result['output'].strip()
+                if not (output_text.count('    ') > 5 and ('|' in output_text or output_text.count('\n') > 3)):
+                    data_for_prompt_parts.append(f"Code Output:\n{output_text}")
+            
+            # Include DataFrame summaries for context
+            if execution_result.get('dataframes'):
+                data_for_prompt_parts.append("DataFrames created:")
+                for df_info in execution_result['dataframes']:
+                    df_summary = f"{df_info['name']} (shape: {df_info['data'].shape}):\n{df_info['data'].head(5).to_string()}"
+                    data_for_prompt_parts.append(df_summary)
+            
+            # Include other variable values if needed
+            if not data_for_prompt_parts:
                 var_summary = []
-                for var_name, var_value in list(self.execution_locals.items())[:5]:
-                    if not var_name.startswith('_'):
-                        try:
-                            if hasattr(var_value, 'head'):  # DataFrame or Series
-                                var_summary.append(f"{var_name}:\n{var_value.head(10).to_string()}")
-                            elif isinstance(var_value, (list, tuple, dict)) and len(str(var_value)) < 500:
-                                var_summary.append(f"{var_name}: {var_value}")
-                            elif isinstance(var_value, (int, float, str)) and len(str(var_value)) < 200:
-                                var_summary.append(f"{var_name}: {var_value}")
-                        except Exception:
-                            pass
-                data_for_prompt = "\n".join(var_summary) if var_summary else "No data captured"
+                if 'locals' in execution_result:
+                    for var_name, var_value in list(execution_result['locals'].items())[:5]:
+                        if not var_name.startswith('_'):
+                            try:
+                                if isinstance(var_value, (int, float, str)) and len(str(var_value)) < 200:
+                                    var_summary.append(f"{var_name}: {var_value}")
+                                elif isinstance(var_value, (list, tuple, dict)) and len(str(var_value)) < 500:
+                                    var_summary.append(f"{var_name}: {var_value}")
+                            except Exception:
+                                pass
+                if var_summary:
+                    data_for_prompt_parts.append("Variables:\n" + "\n".join(var_summary))
+            
+            data_for_prompt = "\n\n".join(data_for_prompt_parts) if data_for_prompt_parts else "No data captured"
             
             final_prompt = self.create_final_prompt(question, data_for_prompt, conversation_history)
             
@@ -419,6 +448,7 @@ IMPORTANT INSTRUCTIONS:
                 'code': code,
                 'code_output': execution_result['output'],
                 'figures': execution_result['figures'],
+                'dataframes': execution_result.get('dataframes', []),
                 'final_answer': final_answer,
                 'error': None
             }
@@ -450,46 +480,54 @@ def setup_controlled_claude_assistant(df: pd.DataFrame, api_key: str):
         if "controlled_claude_history" not in st.session_state:
             st.session_state.controlled_claude_history = []
         
-        # Display chat history
+        # Display chat history with minimal spacing
         if st.session_state.controlled_claude_history:
             for exchange in st.session_state.controlled_claude_history:
                 # User question
                 st.markdown(f'<div class="chat-message-user">{exchange["question"]}</div>', unsafe_allow_html=True)
                 
-                # AI analysis
-                with st.container():
-                    st.markdown("**AI Analysis:**")
+                # AI analysis - no extra container
+                st.markdown("**AI Analysis:**")
+                
+                if exchange["result"]["success"]:
+                    # Show analysis description
+                    st.markdown(f"*{exchange['result']['analysis_description']}*")
                     
-                    if exchange["result"]["success"]:
-                        # Show analysis description
-                        st.markdown(f"*{exchange['result']['analysis_description']}*")
-                        
-                        # Show code in expander
-                        with st.expander("View Analysis Code", expanded=False):
-                            st.code(exchange["result"]["code"], language='python')
-                        
-                        # Show code output if any
-                        if exchange["result"]["code_output"].strip():
+                    # Show code in expander
+                    with st.expander("View Analysis Code", expanded=False):
+                        st.code(exchange["result"]["code"], language='python')
+                    
+                    # Show DataFrames as proper tables
+                    if "dataframes" in exchange["result"] and exchange["result"]["dataframes"]:
+                        for df_info in exchange["result"]["dataframes"]:
+                            st.markdown(f"**{df_info['name']}:**")
+                            st.dataframe(df_info['data'].style.apply('background-color: white'), use_container_width=True)
+                    
+                    # Show code output if any (and not just DataFrame representations)
+                    if exchange["result"]["code_output"].strip():
+                        output_text = exchange["result"]["code_output"].strip()
+                        if not (output_text.count('    ') > 5 and ('|' in output_text or output_text.count('\n') > 3)):
                             st.text(exchange["result"]["code_output"])
-                        
-                        # Show figures
-                        for fig in exchange["result"]["figures"]:
-                            fig.update_layout(
-                                plot_bgcolor='white',
-                                paper_bgcolor='white',
-                                font=dict(color='black'),
-                                height=400
-                            )
-                            st.plotly_chart(fig, use_container_width=True)
-                        
-                        # Show final answer
-                        st.markdown("**Answer:**")
-                        st.text(exchange['result']['final_answer'])
                     
-                    else:
-                        st.error(f"Analysis failed: {exchange['result']['error']}")
+                    # Show figures
+                    for fig in exchange["result"]["figures"]:
+                        fig.update_layout(
+                            plot_bgcolor='white',
+                            paper_bgcolor='white',
+                            font=dict(color='black'),
+                            height=400
+                        )
+                        st.plotly_chart(fig, use_container_width=True)
                     
-                    st.markdown("---")
+                    # Show final answer
+                    st.markdown("**Answer:**")
+                    st.text(exchange['result']['final_answer'])
+                
+                else:
+                    st.error(f"Analysis failed: {exchange['result']['error']}")
+                
+                # Minimal separator
+                st.markdown("---")
         
         # Chat input
         with st.form(key="controlled_claude_form", clear_on_submit=True):
@@ -517,11 +555,11 @@ def setup_controlled_claude_assistant(df: pd.DataFrame, api_key: str):
                 # Display user question immediately
                 st.markdown(f'<div class="chat-message-user">{user_question}</div>', unsafe_allow_html=True)
                 
-                # Create progress container for streaming
-                progress_container = st.empty()
+                # Create progress container that doesn't block other UI elements
+                progress_placeholder = st.empty()
                 
                 # Analyze with Claude using streaming
-                result = assistant.analyze_question_streaming(user_question, df, progress_container, st.session_state.controlled_claude_history)
+                result = assistant.analyze_question_streaming(user_question, df, progress_placeholder, st.session_state.controlled_claude_history)
                 
                 # Add to history
                 st.session_state.controlled_claude_history.append({
