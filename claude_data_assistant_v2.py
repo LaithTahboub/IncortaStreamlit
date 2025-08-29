@@ -118,6 +118,9 @@ CODE:
 
 The code should:
 - Use the dataframe 'df' that's already available
+- ONLY use columns that actually exist in the dataset (check the columns list above)
+- If the question asks about customers but there's no 'Customer' column, use 'Vendor' instead
+- If the question asks about sales but there's no 'Sales' column, use 'Amount' instead
 - Perform the necessary analysis to answer the question
 - Store key results in variables for later explanation
 - Print the final answer/findings in a clear format
@@ -128,7 +131,8 @@ IMPORTANT:
 - Do NOT include any import statements (pandas is pd, numpy is np, plotly.express is px, etc.)
 - All libraries are already imported and available
 - Keep code focused and efficient
-- Store important results in clearly named variables"""
+- Store important results in clearly named variables
+- MUST only reference columns that actually exist in the data structure provided above"""
         
         return prompt
     
@@ -242,6 +246,13 @@ IMPORTANT INSTRUCTIONS:
             for key, value in combined_namespace.items():
                 if key not in self.execution_globals:
                     self.execution_locals[key] = value
+            
+            # Debug: print what variables we captured
+            captured_vars = [k for k in combined_namespace.keys() if k not in self.execution_globals and not k.startswith('_')]
+            if captured_vars:
+                print(f"DEBUG: Captured variables: {captured_vars}")
+            else:
+                print("DEBUG: No new variables captured")
             
             # Restore stdout
             sys.stdout = old_stdout
@@ -401,21 +412,31 @@ IMPORTANT INSTRUCTIONS:
                     df_summary = f"{df_info['name']} (shape: {df_info['data'].shape}):\n{df_info['data'].head(5).to_string()}"
                     data_for_prompt_parts.append(df_summary)
             
-            # Include other variable values if needed
-            if not data_for_prompt_parts:
-                var_summary = []
-                if 'locals' in execution_result:
-                    for var_name, var_value in list(execution_result['locals'].items())[:5]:
-                        if not var_name.startswith('_'):
-                            try:
-                                if isinstance(var_value, (int, float, str)) and len(str(var_value)) < 200:
-                                    var_summary.append(f"{var_name}: {var_value}")
-                                elif isinstance(var_value, (list, tuple, dict)) and len(str(var_value)) < 500:
-                                    var_summary.append(f"{var_name}: {var_value}")
-                            except Exception:
-                                pass
-                if var_summary:
-                    data_for_prompt_parts.append("Variables:\n" + "\n".join(var_summary))
+            # Include other variable values - always include these as they often contain analysis results
+            var_summary = []
+            if 'locals' in execution_result:
+                for var_name, var_value in list(execution_result['locals'].items())[:10]:
+                    if not var_name.startswith('_'):
+                        try:
+                            if isinstance(var_value, (int, float, str)) and len(str(var_value)) < 200:
+                                var_summary.append(f"{var_name}: {var_value}")
+                            elif isinstance(var_value, (list, tuple, dict)) and len(str(var_value)) < 500:
+                                var_summary.append(f"{var_name}: {var_value}")
+                            elif hasattr(var_value, 'head') and hasattr(var_value, 'shape'):  # DataFrame/Series
+                                # Include summary of pandas objects
+                                try:
+                                    shape_info = f"Shape: {var_value.shape}"
+                                    if hasattr(var_value, 'head'):
+                                        head_info = var_value.head().to_string()
+                                        var_summary.append(f"{var_name} ({shape_info}):\n{head_info}")
+                                    else:
+                                        var_summary.append(f"{var_name}: {shape_info}")
+                                except Exception:
+                                    var_summary.append(f"{var_name}: pandas object (shape: {getattr(var_value, 'shape', 'unknown')})")
+                        except Exception:
+                            pass
+            if var_summary:
+                data_for_prompt_parts.append("Analysis Results:\n" + "\n".join(var_summary))
             
             data_for_prompt = "\n\n".join(data_for_prompt_parts) if data_for_prompt_parts else "No data captured"
             
